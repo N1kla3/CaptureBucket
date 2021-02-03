@@ -93,6 +93,8 @@ void ACaptureBucketCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
+	m_MyTimeline.TickTimeline(DeltaSeconds);
+
 	if (m_CursorToWorld != nullptr)
 	{
 		if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
@@ -133,12 +135,18 @@ float ACaptureBucketCharacter::GetMagic() const
 
 void ACaptureBucketCharacter::UpdateHealth(float HealthChange)
 {
-	
+	m_Health += HealthChange;
+	m_Health = FMath::Clamp(m_Health, 0.f, m_FullHealth);
+	m_PreviousHealth = m_HealthPercentage;
+	m_HealthPercentage = m_Health / m_FullHealth;
 }
 
 void ACaptureBucketCharacter::UpdateMagic(float MagicChange)
 {
-	
+	m_Magic += MagicChange;
+	m_Magic = FMath::Clamp(m_Magic, 0.f, m_FullMagic);
+	m_PreviousMagic = m_MagicPercentage;
+	m_MagicPercentage = m_Magic / m_FullMagic;
 }
 
 FText ACaptureBucketCharacter::GetHealthIntText() const
@@ -165,18 +173,31 @@ void ACaptureBucketCharacter::DamageTimer()
 
 void ACaptureBucketCharacter::SetDamageState()
 {
+	SetCanBeDamaged(true);
 }
 
 void ACaptureBucketCharacter::SetMagicValue()
 {
+	m_TimelineValue = m_MyTimeline.GetPlaybackPosition();
+	m_CurveFloatValue = m_PreviousMagic + m_MagicValue * m_MagicCurve->GetFloatValue(m_TimelineValue);
+	m_Magic = m_CurveFloatValue * m_FullMagic;
+	m_Magic = FMath::Clamp(m_Magic, 0.0f, m_FullMagic);
+	m_MagicPercentage = m_CurveFloatValue;
+	m_MagicPercentage = FMath::Clamp(m_MagicPercentage, 0.0f, 1.0f);
 }
 
 void ACaptureBucketCharacter::SetMagicState()
 {
+	bCanUseMagic = true;
+	m_MagicValue = 0.f;
 }
 
 void ACaptureBucketCharacter::SetMagicChange(float MagicChange)
 {
+	bCanUseMagic = false;
+	m_PreviousMagic = m_MagicPercentage;
+	m_MagicValue = MagicChange / m_FullMagic;
+	m_MyTimeline.PlayFromStart();
 }
 
 bool ACaptureBucketCharacter::PlayFlash()
