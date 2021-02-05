@@ -88,6 +88,16 @@ void ACaptureBucketCharacter::BeginPlay()
 	}
 }
 
+void ACaptureBucketCharacter::RecievePointDamage(float Damage, const UDamageType* DamageType, FVector HitLocation,
+	FVector HitNormal, UPrimitiveComponent* HitComponent, FName BoneName, FVector ShotFromDirection,
+	AController* InstigatedBy, AActor* DamageCauser, const FHitResult& HitInfo)
+{
+	SetCanBeDamaged(false);
+	m_RedFlash = true;
+	UpdateHealth(-Damage);
+	DamageTimer();
+}
+
 
 void ACaptureBucketCharacter::Tick(float DeltaSeconds)
 {
@@ -169,6 +179,7 @@ FText ACaptureBucketCharacter::GetMagicIntText() const
 
 void ACaptureBucketCharacter::DamageTimer()
 {
+	GetWorldTimerManager().SetTimer(m_MemberTimerHandle, this, &ACaptureBucketCharacter::SetDamageState, 2.f, false);
 }
 
 void ACaptureBucketCharacter::SetDamageState()
@@ -202,5 +213,10 @@ void ACaptureBucketCharacter::SetMagicChange(float MagicChange)
 
 bool ACaptureBucketCharacter::PlayFlash()
 {
-	return true;
+	if (m_RedFlash)
+	{
+		m_RedFlash = false;
+		return true;
+	}
+	return false;
 }

@@ -65,6 +65,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	void RecievePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	float m_FullHealth;
