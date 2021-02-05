@@ -5,3 +5,4 @@
 #include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCaptureBucket, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(UILog, Log, All);
