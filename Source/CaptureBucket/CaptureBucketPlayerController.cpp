@@ -9,6 +9,7 @@
 #include "CaptureBucketCharacter.h"
 #include "CPHud.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ACaptureBucketPlayerController::ACaptureBucketPlayerController()
 {
@@ -69,6 +70,7 @@ void ACaptureBucketPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
+	SetNewMoveDestination(m_Destination);
 }
 
 void ACaptureBucketPlayerController::SetupInputComponent()
@@ -112,7 +114,7 @@ void ACaptureBucketPlayerController::MoveToMouseCursor()
 		if (Hit.bBlockingHit)
 		{
 			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
+			m_Destination = Hit.ImpactPoint;
 		}
 	}
 }
@@ -139,10 +141,9 @@ void ACaptureBucketPlayerController::SetNewMoveDestination(const FVector DestLoc
 		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
 
 		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
+		if ((Distance > 5.0f))
 		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-			//TODO: fix multiplayer movement bug
+			MyPawn->AddMovementInput(UKismetMathLibrary::GetDirectionUnitVector(MyPawn->GetActorLocation(), DestLocation));
 		}
 	}
 }
