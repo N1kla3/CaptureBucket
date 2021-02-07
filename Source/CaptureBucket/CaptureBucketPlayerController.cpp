@@ -1,16 +1,71 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CaptureBucketPlayerController.h"
+
+#include "CaptureBucket.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "CaptureBucketCharacter.h"
+#include "CPHud.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ACaptureBucketPlayerController::ACaptureBucketPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+}
+
+void ACaptureBucketPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		if (const auto controller = GetWorld()->GetFirstPlayerController<ACaptureBucketPlayerController>())
+		{
+			if (controller == this)
+			{
+				SetupHUD();
+			}
+		}
+	}
+	else
+	{
+		SetupHUD();
+	}
+	if (GetPawn())
+   	{
+   		m_Destination = GetPawn()->GetActorLocation();
+   	}
+}
+
+void ACaptureBucketPlayerController::SetupHUD()
+{
+	if (!HUDClass)
+	{
+		UE_LOG(LogCaptureBucket, Error, TEXT("Controller:: no HUD class"));
+		Destroy();
+		return;
+	}
+
+	FActorSpawnParameters param;
+	param.Owner = this;
+	param.Instigator = this->GetInstigator();
+	param.ObjectFlags |= RF_Transient;
+
+	MyHUD = GetWorld()->SpawnActor<AHUD>(HUDClass, param);
+
+	auto capture_bucket_hud = Cast<ACPHud>(MyHUD);
+	if (capture_bucket_hud)
+	{
+		capture_bucket_hud->SetupHUD(this);	
+	}
+	else
+	{
+		UE_LOG(LogCaptureBucket, Warning, TEXT("Controller:: !setupHUD"));
+	}
 }
 
 void ACaptureBucketPlayerController::PlayerTick(float DeltaTime)
@@ -22,6 +77,7 @@ void ACaptureBucketPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
+	SetNewMoveDestination(m_Destination);
 }
 
 void ACaptureBucketPlayerController::SetupInputComponent()
@@ -65,7 +121,7 @@ void ACaptureBucketPlayerController::MoveToMouseCursor()
 		if (Hit.bBlockingHit)
 		{
 			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
+			m_Destination = Hit.ImpactPoint;
 		}
 	}
 }
@@ -91,10 +147,9 @@ void ACaptureBucketPlayerController::SetNewMoveDestination(const FVector DestLoc
 	{
 		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
 
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
+		if (Distance > 5.f)
 		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
+			MyPawn->AddMovementInput(UKismetMathLibrary::GetDirectionUnitVector(MyPawn->GetActorLocation(), DestLocation));
 		}
 	}
 }

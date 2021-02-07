@@ -6,4 +6,4 @@
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, CaptureBucket, "CaptureBucket" );
 
 DEFINE_LOG_CATEGORY(LogCaptureBucket)
- 
+DEFINE_LOG_CATEGORY(UILog)

@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CaptureBucketCharacter.h"
+
+#include "CaptureBucket.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -55,7 +57,6 @@ ACaptureBucketCharacter::ACaptureBucketCharacter()
 	}
 	m_CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	m_CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -77,6 +78,10 @@ void ACaptureBucketCharacter::BeginPlay()
 	m_PreviousMagic = m_MagicPercentage;
 	bCanUseMagic = true;
 
+	if (GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		m_CursorToWorld->SetVisibility(false);
+	}
 	if (m_MagicCurve)
 	{
 		FOnTimelineFloat timeline_callback;
@@ -86,6 +91,16 @@ void ACaptureBucketCharacter::BeginPlay()
 		m_MyTimeline.AddInterpFloat(m_MagicCurve, timeline_callback);
 		m_MyTimeline.SetTimelineFinishedFunc(timeline_finished_callback);
 	}
+}
+
+void ACaptureBucketCharacter::RecievePointDamage(float Damage, const UDamageType* DamageType, FVector HitLocation,
+	FVector HitNormal, UPrimitiveComponent* HitComponent, FName BoneName, FVector ShotFromDirection,
+	AController* InstigatedBy, AActor* DamageCauser, const FHitResult& HitInfo)
+{
+	SetCanBeDamaged(false);
+	m_RedFlash = true;
+	UpdateHealth(-Damage);
+	DamageTimer();
 }
 
 
@@ -169,6 +184,7 @@ FText ACaptureBucketCharacter::GetMagicIntText() const
 
 void ACaptureBucketCharacter::DamageTimer()
 {
+	GetWorldTimerManager().SetTimer(m_MemberTimerHandle, this, &ACaptureBucketCharacter::SetDamageState, 2.f, false);
 }
 
 void ACaptureBucketCharacter::SetDamageState()
@@ -202,5 +218,10 @@ void ACaptureBucketCharacter::SetMagicChange(float MagicChange)
 
 bool ACaptureBucketCharacter::PlayFlash()
 {
-	return true;
+	if (m_RedFlash)
+	{
+		m_RedFlash = false;
+		return true;
+	}
+	return false;
 }

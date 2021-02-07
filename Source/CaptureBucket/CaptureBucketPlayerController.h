@@ -14,7 +14,13 @@ class ACaptureBucketPlayerController : public APlayerController
 public:
 	ACaptureBucketPlayerController();
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ACPHud> HUDClass;
+
 protected:
+	virtual void BeginPlay() override;
+
+	void SetupHUD();
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
@@ -38,6 +44,9 @@ protected:
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
+
+	FVector m_Destination;
 };
+
 
 
