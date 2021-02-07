@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CaptureBucketCharacter.h"
+
+#include "CaptureBucket.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -55,7 +57,6 @@ ACaptureBucketCharacter::ACaptureBucketCharacter()
 	}
 	m_CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	m_CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -77,6 +78,10 @@ void ACaptureBucketCharacter::BeginPlay()
 	m_PreviousMagic = m_MagicPercentage;
 	bCanUseMagic = true;
 
+	if (GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		m_CursorToWorld->SetVisibility(false);
+	}
 	if (m_MagicCurve)
 	{
 		FOnTimelineFloat timeline_callback;

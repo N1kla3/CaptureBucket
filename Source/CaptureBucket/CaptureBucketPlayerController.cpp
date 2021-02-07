@@ -25,13 +25,20 @@ void ACaptureBucketPlayerController::BeginPlay()
 	{
 		if (const auto controller = GetWorld()->GetFirstPlayerController<ACaptureBucketPlayerController>())
 		{
-			if (controller == this) SetupHUD();
+			if (controller == this)
+			{
+				SetupHUD();
+			}
 		}
 	}
 	else
 	{
 		SetupHUD();
 	}
+	if (GetPawn())
+   	{
+   		m_Destination = GetPawn()->GetActorLocation();
+   	}
 }
 
 void ACaptureBucketPlayerController::SetupHUD()
@@ -140,8 +147,7 @@ void ACaptureBucketPlayerController::SetNewMoveDestination(const FVector DestLoc
 	{
 		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
 
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 5.0f))
+		if (Distance > 5.f)
 		{
 			MyPawn->AddMovementInput(UKismetMathLibrary::GetDirectionUnitVector(MyPawn->GetActorLocation(), DestLocation));
 		}
