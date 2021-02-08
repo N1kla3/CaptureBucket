@@ -60,6 +60,8 @@ ACaptureBucketCharacter::ACaptureBucketCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	M_AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 void ACaptureBucketCharacter::BeginPlay()
@@ -136,6 +138,11 @@ void ACaptureBucketCharacter::Tick(float DeltaSeconds)
 			m_CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+}
+
+UAbilitySystemComponent* ACaptureBucketCharacter::GetAbilitySystemComponent() const
+{
+	return M_AbilitySystemComponent;
 }
 
 float ACaptureBucketCharacter::GetHealth() const

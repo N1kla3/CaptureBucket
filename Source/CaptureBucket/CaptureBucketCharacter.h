@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/TimelineComponent.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
 #include "CaptureBucketCharacter.generated.h"
 
 UCLASS(Blueprintable)
-class ACaptureBucketCharacter : public ACharacter
+class ACaptureBucketCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -52,6 +54,8 @@ public:
     bool PlayFlash();
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return m_TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return m_CameraBoom; }
@@ -112,6 +116,9 @@ protected:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* m_CursorToWorld;
+
+	UPROPERTY()
+		UAbilitySystemComponent* M_AbilitySystemComponent;
 	
 	FTimeline m_MyTimeline;
 	float m_CurveFloatValue;
