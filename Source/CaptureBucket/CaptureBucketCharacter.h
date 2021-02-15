@@ -56,6 +56,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void OnRep_PlayerState() override;
 	
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return m_TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return m_CameraBoom; }

@@ -3,6 +3,7 @@
 #include "CaptureBucketCharacter.h"
 
 #include "CaptureBucket.h"
+#include "DefaultPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -143,6 +144,32 @@ void ACaptureBucketCharacter::Tick(float DeltaSeconds)
 UAbilitySystemComponent* ACaptureBucketCharacter::GetAbilitySystemComponent() const
 {
 	return M_AbilitySystemComponent;
+}
+
+void ACaptureBucketCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	auto player_state = GetPlayerState<ADefaultPlayerState>();
+	if (player_state)
+	{
+		M_AbilitySystemComponent = player_state->GetAbilitySystemComponent();
+
+		player_state->GetAbilitySystemComponent()->InitAbilityActorInfo(player_state, this);
+	}
+}
+
+void ACaptureBucketCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	auto player_state = GetPlayerState<ADefaultPlayerState>();
+	if (player_state)
+	{
+		M_AbilitySystemComponent = player_state->GetAbilitySystemComponent();
+
+		player_state->GetAbilitySystemComponent()->InitAbilityActorInfo(player_state, this);
+	}
 }
 
 float ACaptureBucketCharacter::GetHealth() const
