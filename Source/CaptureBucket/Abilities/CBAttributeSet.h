@@ -30,15 +30,43 @@ public:
 		FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCBAttributeSet, Health)
 
+	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRepBaseHealth)
+		FGameplayAttributeData BaseHealth;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, BaseHealth)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRepMaxHealth)
 		FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UCBAttributeSet, MaxHealth)
 
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRepMana)
+		FGameplayAttributeData Mana;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, Mana)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRepBaseMana)
+		FGameplayAttributeData BaseMana;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, BaseMana)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRepMaxMana)
+		FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, MaxMana)
 protected:
 
 	UFUNCTION()
 	void OnRepHealth(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
+	void OnRepBaseHealth(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
 	void OnRepMaxHealth(const FGameplayAttributeData& OldValue);
+	
+	UFUNCTION()
+	void OnRepMana(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	void OnRepBaseMana(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	void OnRepMaxMana(const FGameplayAttributeData& OldValue);
 };

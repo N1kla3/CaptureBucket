@@ -10,7 +10,12 @@ void UCBAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, BaseHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+	
+	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, Mana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, BaseMana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCBAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 }
 
 void UCBAttributeSet::OnRepHealth(const FGameplayAttributeData& OldValue)
@@ -18,7 +23,27 @@ void UCBAttributeSet::OnRepHealth(const FGameplayAttributeData& OldValue)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, Health, OldValue);
 }
 
+void UCBAttributeSet::OnRepBaseHealth(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, BaseHealth, OldValue);
+}
+
 void UCBAttributeSet::OnRepMaxHealth(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, MaxHealth, OldValue);
+}
+
+void UCBAttributeSet::OnRepMana(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, Mana, OldValue);
+}
+
+void UCBAttributeSet::OnRepBaseMana(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, BaseMana, OldValue);
+}
+
+void UCBAttributeSet::OnRepMaxMana(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCBAttributeSet, MaxMana, OldValue);
 }
