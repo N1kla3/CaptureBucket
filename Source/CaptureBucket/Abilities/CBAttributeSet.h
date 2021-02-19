@@ -50,6 +50,24 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRepMaxMana)
 		FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCBAttributeSet, MaxMana)
+
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRepPhysicalArmor)
+		FGameplayAttributeData PhyshicalArmor;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, PhyshicalArmor)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRepBasePhysicalArmor)
+		FGameplayAttributeData BasePhysicalArmor;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, BasePhysicalArmor)
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRepMagicArmor)
+		FGameplayAttributeData MagiclArmor;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, MagiclArmor)
+
+	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRepBaseMagicArmor)
+		FGameplayAttributeData BaseMagicArmor;
+	ATTRIBUTE_ACCESSORS(UCBAttributeSet, BaseMagicArmor)
+	
 protected:
 
 	UFUNCTION()
@@ -69,4 +87,16 @@ protected:
 
 	UFUNCTION()
 	void OnRepMaxMana(const FGameplayAttributeData& OldValue);
+	
+	UFUNCTION()
+	void OnRepPhysicalArmor(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	void OnRepBasePhysicalArmor(const FGameplayAttributeData& OldValue);
+	
+	UFUNCTION()
+	void OnRepMagicArmor(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	void OnRepBaseMagicArmor(const FGameplayAttributeData& OldValue);
 };
