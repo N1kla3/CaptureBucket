@@ -3,6 +3,7 @@
 #include "CaptureBucketCharacter.h"
 
 #include "CaptureBucket.h"
+#include "DefaultPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -60,6 +61,8 @@ ACaptureBucketCharacter::ACaptureBucketCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	M_AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 void ACaptureBucketCharacter::BeginPlay()
@@ -135,6 +138,37 @@ void ACaptureBucketCharacter::Tick(float DeltaSeconds)
 			m_CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			m_CursorToWorld->SetWorldRotation(CursorR);
 		}
+	}
+}
+
+UAbilitySystemComponent* ACaptureBucketCharacter::GetAbilitySystemComponent() const
+{
+	return M_AbilitySystemComponent;
+}
+
+void ACaptureBucketCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	auto player_state = GetPlayerState<ADefaultPlayerState>();
+	if (player_state)
+	{
+		M_AbilitySystemComponent = player_state->GetAbilitySystemComponent();
+
+		player_state->GetAbilitySystemComponent()->InitAbilityActorInfo(player_state, this);
+	}
+}
+
+void ACaptureBucketCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	auto player_state = GetPlayerState<ADefaultPlayerState>();
+	if (player_state)
+	{
+		M_AbilitySystemComponent = player_state->GetAbilitySystemComponent();
+
+		player_state->GetAbilitySystemComponent()->InitAbilityActorInfo(player_state, this);
 	}
 }
 
